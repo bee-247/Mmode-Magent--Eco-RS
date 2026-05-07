@@ -1,0 +1,23 @@
+# Environment and secrets
+.env
+*.env.local
+
+# Virtual environments
+.venv/
+venv/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Local databases and generated runtime state
+*.db
+*.sqlite3
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>电商推荐 Agent 对话</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f9;
+        --panel: #ffffff;
+        --ink: #1f2937;
+        --muted: #6b7280;
+        --line: #d9dee7;
+        --accent: #0f766e;
+        --accent-strong: #115e59;
+        --soft: #eef7f5;
+        --warn: #a16207;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        place-items: stretch center;
+        min-height: 100vh;
+      }
+
+      .chat {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        width: min(920px, 100%);
+        min-height: 100vh;
+        border-left: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+
+      .topbar {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .messages {
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .message {
+        width: fit-content;
+        max-width: min(640px, 92%);
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        line-height: 1.55;
+        white-space: pre-wrap;
+      }
+
+      .message.user {
+        margin-left: auto;
+        color: #ffffff;
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .message.agent {
+        background: #fafafa;
+      }
+
+      .composer {
+        padding: 16px 20px 20px;
+        border-top: 1px solid var(--line);
+        background: #fbfcfd;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        background: #ffffff;
+        outline: none;
+      }
+
+      input,
+      select {
+        height: 38px;
+        padding: 0 10px;
+      }
+
+      textarea {
+        min-height: 88px;
+        resize: vertical;
+        padding: 12px;
+        line-height: 1.5;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+      }
+
+      .send-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .status {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .send {
+        height: 40px;
+        min-width: 108px;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        background: var(--accent);
+        cursor: pointer;
+      }
+
+      .send:hover {
+        background: var(--accent-strong);
+      }
+
+      .send:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .image-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .file-label {
+        display: inline-flex;
+        align-items: center;
+        height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        cursor: pointer;
+      }
+
+      .file-label input {
+        display: none;
+      }
+
+      .image-name {
+        min-width: 0;
+        color: var(--muted);
+        font-size: 13px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .error {
+        color: var(--warn);
+      }
+
+      @media (max-width: 860px) {
+        .chat {
+          min-height: 100vh;
+          border-left: 0;
+          border-right: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="chat" aria-label="Agent 对话">
+        <header class="topbar">
+          <h1 class="title">电商推荐 Agent</h1>
+          <p class="subtitle">直接说出你的购物需求，Agent 会完成理解、召回、库存过滤和文案生成。</p>
+        </header>
+
+        <div id="messages" class="messages">
+          <div class="message agent">你好，我可以根据你的需求推荐商品。比如：我想找通勤用的降噪耳机。</div>
+        </div>
+
+        <form id="chat-form" class="composer">
+          <label class="field">
+            <span class="label">消息</span>
+            <textarea id="message" required placeholder="告诉 Agent 你想买什么"></textarea>
+          </label>
+          <div class="image-row">
+            <label class="file-label">
+              <input id="image" type="file" accept="image/*" />
+              上传图片
+            </label>
+            <span id="image-name" class="image-name">未选择图片</span>
+          </div>
+          <div class="send-row">
+            <span id="status" class="status">准备就绪</span>
+            <button id="send" class="send" type="submit">发送</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const form = document.querySelector("#chat-form");
+      const messages = document.querySelector("#messages");
+      const statusEl = document.querySelector("#status");
+      const sendBtn = document.querySelector("#send");
+      const imageInput = document.querySelector("#image");
+      const imageName = document.querySelector("#image-name");
+
+      imageInput.addEventListener("change", () => {
+        const file = imageInput.files && imageInput.files[0];
+        imageName.textContent = file ? file.name : "未选择图片";
+      });
+
+      function addMessage(role, text) {
+        const el = document.createElement("div");
+        el.className = `message ${role}`;
+        el.textContent = text;
+        messages.appendChild(el);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function setLoading(isLoading) {
+        sendBtn.disabled = isLoading;
+        statusEl.textContent = isLoading ? "Agent 正在思考和召回商品..." : "准备就绪";
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const message = document.querySelector("#message").value.trim();
+        if (!message) return;
+
+        addMessage("user", message);
+        setLoading(true);
+
+        const imageFile = imageInput.files && imageInput.files[0];
+
+        try {
+          let response;
+          if (imageFile) {
+            const formData = new FormData();
+            formData.append("message", message);
+            formData.append("image", imageFile);
+            response = await fetch("/api/v1/chat/image", {
+              method: "POST",
+              body: formData,
+            });
+          } else {
+            const payload = {
+              user_id: "web_user",
+              message,
+              category: null,
+              recall_mode: "auto",
+              num_items: 6,
+            };
+            response = await fetch("/api/v1/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+          }
+          if (!response.ok) {
+            throw new Error(`请求失败：${response.status}`);
+          }
+          const data = await response.json();
+          addMessage("agent", data.answer);
+          document.querySelector("#message").value = "";
+          imageInput.value = "";
+          imageName.textContent = "未选择图片";
+        } catch (error) {
+          const text = error instanceof Error ? error.message : String(error);
+          addMessage("agent", `出错了：${text}`);
+          statusEl.innerHTML = '<span class="error">请求失败</span>';
+        } finally {
+          setLoading(false);
+        }
+      });
+    </script>
+  </body>
+</html>
