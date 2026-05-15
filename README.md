@@ -217,6 +217,6 @@ The author and affiliation of this project:
 
 ```text
 项目名称 (Project Name): Mmode-Magent--Eco-RS
-项目作者 (Author): Shaorui Liu
+项目作者 (Author): Shaorui Liu，Zifeng Zhou，Shuqiang Huang
 作者单位 (Affiliation): 暨南大学网络空间安全学院 (College of Cyber Security,Jinan University)
 ```
