@@ -209,14 +209,3 @@ sum(product_embedding_i * behavior_weight_i) / sum(behavior_weight_i)
 pytest
 ```
 
-## 项目声明 Project Statement
-
-本项目的作者及单位：
-
-The author and affiliation of this project:
-
-```text
-项目名称 (Project Name): Mmode-Magent--Eco-RS
-项目作者 (Author): Shaorui Liu，Zifeng Zhou，Shuqiang Huang
-作者单位 (Affiliation): 暨南大学网络空间安全学院 (College of Cyber Security,Jinan University)
-```
