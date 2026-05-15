@@ -2,10 +2,6 @@
 
 基于多 Agent 的电商推荐系统 Python 实现。系统支持网页对话推荐、图片理解推荐、用户历史行为推荐、商品向量召回、用户向量召回、库存过滤、营销文案生成和数据生成。
 
-## 项目声明截图
-
-![项目声明截图](docs/project-statement.svg)
-
 ## 功能概览
 
 - 对话推荐：用户在网页端输入购物需求，系统返回推荐商品。
@@ -211,4 +207,16 @@ sum(product_embedding_i * behavior_weight_i) / sum(behavior_weight_i)
 
 ```bash
 pytest
+```
+
+## 项目声明 Project Statement
+
+本项目的作者及单位：
+
+The author and affiliation of this project:
+
+```text
+项目名称 (Project Name): Mmode-Magent--Eco-RS
+项目作者 (Author): Shaorui Liu
+作者单位 (Affiliation): 暨南大学网络空间安全学院 (College of Cyber Security,Jinan University)
 ```
